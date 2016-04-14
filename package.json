@@ -1,0 +1,16 @@
+{
+  "name": "aegir-format",
+  "version": "1.0.0",
+  "description": "Automatically transform a given repo into using AEgir",
+  "main": "index.js",
+  "bin": {
+    "aegir-format": "bin/format",
+  },
+  "dependencies": {
+    "glob": "^7.0.3"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+  "license": "MIT"
+}

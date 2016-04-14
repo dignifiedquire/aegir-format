@@ -1,0 +1,8 @@
+#! /usr/bin/env node
+
+'use strict'
+
+const user = process.argv[2]
+const name = process.argv[3]
+
+require('../index')(user, name)
