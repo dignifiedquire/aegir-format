@@ -4,7 +4,7 @@
   "description": "Automatically transform a given repo into using AEgir",
   "main": "index.js",
   "bin": {
-    "aegir-format": "bin/format",
+    "aegir-format": "bin/format"
   },
   "dependencies": {
     "glob": "^7.0.3"

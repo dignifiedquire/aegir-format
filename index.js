@@ -5,20 +5,25 @@ const path = require('path')
 const fs = require('fs')
 const glob = require('glob')
 
-module.exports = function (user, name) {
+module.exports = function (user, name, upstream) {
   console.log('Starting to transform %s/%s', user, name)
-
-  if (fs.existsSync(`./${name}`)) {
-    exec(`rm -rf ./${name}`)
-  }
 
   const cwd = path.resolve(__dirname, 'modules', name)
 
+  console.log('cwd: %s', cwd)
   // git clone git@github.com:<user>/<repo>.git
   if (!fs.existsSync(cwd)) {
     console.log('Cloning..')
-    exec(`git clone git@github.com:${user}/${name}.git`)
+    exec(`git clone git@github.com:${user}/${name}.git`, {
+      cwd: path.resolve(__dirname, 'modules')
+    })
   }
+
+  if (upstream) {
+    console.log('Adding upstream')
+    exec(`git remote add upstream git@github.com${upstream}/${name}`)
+  }
+
   try {
     exec('git checkout dignified', {cwd})
   } catch (err) {
@@ -27,7 +32,7 @@ module.exports = function (user, name) {
   // git checkout -b aegir
   const branch = exec('git name-rev --name-only HEAD', {cwd}).toString().trim()
   if (branch === 'master' || branch === 'dignified') {
-    console.log('checkout')
+    console.log('git checkout -b aegir')
     exec('git checkout -b aegir', {cwd})
   }
 
@@ -140,9 +145,16 @@ module.exports = function (user, name) {
 
   // Add circle.yml
   console.log('Copying circle.yml')
-  exec('cp ../circle.example.yml circle.yml', {cwd})
+  exec('cp ../../circle.example.yml circle.yml', {cwd})
 
   // Add .travis.yml
   console.log('Copying .travis.yml')
-  exec('cp ../travis.example.yml .travis.yml', {cwd})
+  exec('cp ../../travis.example.yml .travis.yml', {cwd})
+
+  console.log('Updating README.md')
+  let readme = fs.readFileSync(path.join(cwd, 'README.md')).toString()
+
+  readme = readme.replace('[![dignified.js](https://img.shields.io/badge/uses-dignified.js-blue.svg?style=flat-square)](https://github.com/dignifiedquire/dignified.js)\n', '')
+
+  fs.writeFileSync(path.join(cwd, 'README.md'), readme)
 }
